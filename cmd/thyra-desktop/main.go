@@ -102,22 +102,6 @@ func main() {
 
 		stopMenu.Disabled = true
 
-		for _, item := range m.Items {
-			if item.IsQuit {
-				item.Action = func() {
-					err := cmd.Process.Kill()
-					if err != nil {
-						log.Fatal(err)
-					}
-					_, err = cmd.Process.Wait()
-					if err != nil {
-						log.Fatal(err)
-					}
-					a.Quit()
-				}
-			}
-		}
-
 		icon := fyne.NewStaticResource("logo", logo)
 		desk.SetSystemTrayIcon(icon)
 		desk.SetSystemTrayMenu(m)
@@ -127,6 +111,23 @@ func main() {
 		w.Hide()
 	})
 	w.Resize(fyne.NewSize(600, 400))
+
+	defer func() {
+		log.Println("Closing...")
+		if cmd.Process != nil {
+			log.Println("Stopping server...")
+			err := cmd.Process.Kill()
+			if err != nil {
+
+				log.Fatal(err)
+			}
+			_, err = cmd.Process.Wait()
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("Server stopped")
+		}
+	}()
 
 	a.Run()
 }
