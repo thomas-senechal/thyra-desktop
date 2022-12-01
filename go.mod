@@ -1,4 +1,4 @@
-module cmd/thyra-desktop
+module github.com/thomas-senechal/thyra-desktop
 
 go 1.19
 
